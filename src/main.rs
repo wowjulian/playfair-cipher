@@ -74,24 +74,12 @@ fn get_keyword_grid(keyword_input: String) -> [[char; 5]; 5] {
     return grid;
 }
 
-fn find_row(grid: [[char; 5]; 5], diagraph: char) -> usize {
-    let target = if diagraph == 'J' { 'I' } else { diagraph };
-    for row in 0..5 {
-        for col in 0..5 {
-            if grid[row][col] == target {
-                return row;
-            }
-        }
-    }
-    panic!("diagraph not found: {} target: {}", diagraph, target);
-}
-
-fn find_col(grid: [[char; 5]; 5], diagraph: char) -> usize {
+fn find_diagraph_pos(grid: [[char; 5]; 5], diagraph: char) -> (usize, usize) {
     let target: char = if diagraph == 'J' { 'I' } else { diagraph };
     for row in 0..5 {
         for col in 0..5 {
             if grid[row][col] == target {
-                return col;
+                return (row, col);
             }
         }
     }
@@ -145,10 +133,10 @@ fn main() {
             first_letter_index = first_letter_index + 2;
         }
 
-        let first_letter_row = find_row(keyword_grid, diagraph_first_letter);
-        let first_letter_col = find_col(keyword_grid, diagraph_first_letter);
-        let second_letter_row = find_row(keyword_grid, diagraph_second_letter);
-        let second_letter_col = find_col(keyword_grid, diagraph_second_letter);
+        let (first_letter_row, first_letter_col) =
+            find_diagraph_pos(keyword_grid, diagraph_first_letter);
+        let (second_letter_row, second_letter_col) =
+            find_diagraph_pos(keyword_grid, diagraph_second_letter);
 
         let is_same_row = first_letter_row == second_letter_row;
         if is_same_row {
