@@ -74,13 +74,59 @@ fn get_keyword_grid(keyword_input: String) -> [[char; 5]; 5] {
     return grid;
 }
 
+fn get_second_letter(isOverflow: bool) -> char {
+    return ' ';
+}
 fn main() {
     let args = Args::parse();
-    let plaintext = args.plaintext;
-    let keyword = args.keyword;
+    let plaintext_input = args.plaintext;
+    let keyword_input = args.keyword;
 
-    let keyword_grid = get_keyword_grid(keyword);
+    let keyword_grid = get_keyword_grid(keyword_input);
+
+    let plaintext: String = plaintext_input
+        .chars()
+        .filter(|&ch| ch != ' ' && ch != ',' && ch != '.')
+        .map(|ch| ch.to_ascii_uppercase())
+        .collect();
+
+    println!("plaintext: {}", plaintext);
+    // for (index, character) in plaintext.chars().enumerate() {}
     // for (index, character) in plaintext.chars().enumerate() {}
 
-    // for (index, character) in plaintext.chars().enumerate() {}
+    let plaintext_chars: Vec<char> = plaintext.chars().collect();
+
+    let mut first_letter_index = 0;
+    while first_letter_index < plaintext.len() {
+        let second_letter_index: usize = first_letter_index + 1;
+        let first_letter = plaintext_chars[first_letter_index];
+        let second_letter_exists = second_letter_index < plaintext.len();
+        let same_first_and_second_letter = if second_letter_exists {
+            first_letter == plaintext_chars[second_letter_index]
+        } else {
+            false
+        };
+        let diagraph_first_letter = first_letter;
+
+        let second_letter = if second_letter_exists {
+            plaintext_chars[second_letter_index]
+        } else {
+            'X'
+        };
+        let diagraph_second_letter = if same_first_and_second_letter {
+            'X'
+        } else {
+            second_letter
+        };
+
+        if same_first_and_second_letter {
+            first_letter_index = first_letter_index + 1;
+        } else {
+            first_letter_index = first_letter_index + 2;
+        }
+
+        print!("{}", diagraph_first_letter);
+        print!("{}", diagraph_second_letter);
+        print!(" ");
+    }
 }
