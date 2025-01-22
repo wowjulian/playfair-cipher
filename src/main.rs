@@ -74,9 +74,30 @@ fn get_keyword_grid(keyword_input: String) -> [[char; 5]; 5] {
     return grid;
 }
 
-fn get_second_letter(isOverflow: bool) -> char {
-    return ' ';
+fn find_row(grid: [[char; 5]; 5], diagraph: char) -> usize {
+    let target = if diagraph == 'J' { 'I' } else { diagraph };
+    for row in 0..5 {
+        for col in 0..5 {
+            if grid[row][col] == target {
+                return row;
+            }
+        }
+    }
+    panic!("diagraph not found: {} target: {}", diagraph, target);
 }
+
+fn find_col(grid: [[char; 5]; 5], diagraph: char) -> usize {
+    let target = if diagraph == 'J' { 'I' } else { diagraph };
+    for row in 0..5 {
+        for col in 0..5 {
+            if grid[row][col] == target {
+                return col;
+            }
+        }
+    }
+    panic!("diagraph not found: {} target: {}", diagraph, target);
+}
+
 fn main() {
     let args = Args::parse();
     let plaintext_input = args.plaintext;
@@ -91,11 +112,10 @@ fn main() {
         .collect();
 
     println!("plaintext: {}", plaintext);
-    // for (index, character) in plaintext.chars().enumerate() {}
-    // for (index, character) in plaintext.chars().enumerate() {}
 
     let plaintext_chars: Vec<char> = plaintext.chars().collect();
 
+    let mut ciphertext: Vec<char> = Vec::new();
     let mut first_letter_index = 0;
     while first_letter_index < plaintext.len() {
         let second_letter_index: usize = first_letter_index + 1;
@@ -125,8 +145,41 @@ fn main() {
             first_letter_index = first_letter_index + 2;
         }
 
-        print!("{}", diagraph_first_letter);
-        print!("{}", diagraph_second_letter);
-        print!(" ");
+        // print!("{}", diagraph_first_letter);
+        // print!("{}", diagraph_second_letter);
+
+        let first_letter_row = find_row(keyword_grid, diagraph_first_letter);
+        let first_letter_col = find_col(keyword_grid, diagraph_first_letter);
+        let second_letter_row = find_row(keyword_grid, diagraph_second_letter);
+        let second_letter_col = find_col(keyword_grid, diagraph_second_letter);
+
+        let is_same_row = first_letter_row == second_letter_row;
+        if is_same_row {
+            let first_letter_ciphertext =
+                keyword_grid[first_letter_row][(first_letter_col + 1) % 5];
+            let second_letter_ciphertext =
+                keyword_grid[second_letter_row][(second_letter_col + 1) % 5];
+            ciphertext.push(first_letter_ciphertext);
+            ciphertext.push(second_letter_ciphertext);
+            continue;
+        }
+        let is_same_col = first_letter_col == second_letter_col;
+        if is_same_col {
+            let first_letter_ciphertext =
+                keyword_grid[(first_letter_row + 1) % 5][first_letter_col];
+            let second_letter_ciphertext =
+                keyword_grid[(second_letter_row + 1) % 5][second_letter_col];
+            ciphertext.push(first_letter_ciphertext);
+            ciphertext.push(second_letter_ciphertext);
+            continue;
+        }
+
+        let first_letter_ciphertext = keyword_grid[first_letter_row][second_letter_col];
+        let second_letter_ciphertext = keyword_grid[second_letter_row][first_letter_col];
+        ciphertext.push(first_letter_ciphertext);
+        ciphertext.push(second_letter_ciphertext);
     }
+
+    let ciphertext_output: String = ciphertext.into_iter().collect();
+    println!("ciphertext: {}", ciphertext_output);
 }
