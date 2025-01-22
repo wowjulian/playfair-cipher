@@ -1,10 +1,10 @@
 # Intro
 
-For homework
+For homework.
 
 # How to run source code
 
-You can either run the source code or binary for convinence.
+Clone this repo first, then you can either run the source code or binary for convinence.
 
 ## Source code
 
