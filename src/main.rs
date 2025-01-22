@@ -15,7 +15,14 @@ struct Args {
     keyword: String,
 }
 
-fn get_keyword_grid(keyword: String) -> [[char; 5]; 5] {
+fn get_keyword_grid(keyword_input: String) -> [[char; 5]; 5] {
+    let mut seen = HashSet::new();
+    // Remove duplicates and empty character
+    let keyword: String = keyword_input
+        .chars()
+        .filter(|&ch| ch != ' ' && seen.insert(ch))
+        .collect();
+
     let alphabets_without_j = [
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
         'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
@@ -57,6 +64,13 @@ fn get_keyword_grid(keyword: String) -> [[char; 5]; 5] {
             }
         }
     }
+    println!("Keyword matrix:");
+    for row in grid.iter() {
+        for &ch in row.iter() {
+            print!("{} ", ch);
+        }
+        println!();
+    }
     return grid;
 }
 
@@ -65,14 +79,7 @@ fn main() {
     let plaintext = args.plaintext;
     let keyword = args.keyword;
 
-    println!("keyword: {}", keyword);
     let keyword_grid = get_keyword_grid(keyword);
-    for row in keyword_grid.iter() {
-        for &ch in row.iter() {
-            print!("{} ", ch);
-        }
-        println!();
-    }
     // for (index, character) in plaintext.chars().enumerate() {}
 
     // for (index, character) in plaintext.chars().enumerate() {}
