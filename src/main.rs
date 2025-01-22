@@ -1,6 +1,6 @@
-use std::collections::HashSet;
-
 use clap::Parser;
+use log::debug;
+use std::collections::HashSet;
 
 /// Simple program to encrypt plaintext using playfair cipher
 #[derive(Parser, Debug)]
@@ -64,12 +64,12 @@ fn get_keyword_grid(keyword_input: String) -> [[char; 5]; 5] {
             }
         }
     }
-    println!("Keyword matrix:");
+    debug!("Keyword matrix:");
     for row in grid.iter() {
         for &ch in row.iter() {
-            print!("{} ", ch);
+            debug!("{} ", ch);
         }
-        println!();
+        debug!("");
     }
     return grid;
 }
@@ -87,7 +87,7 @@ fn find_row(grid: [[char; 5]; 5], diagraph: char) -> usize {
 }
 
 fn find_col(grid: [[char; 5]; 5], diagraph: char) -> usize {
-    let target = if diagraph == 'J' { 'I' } else { diagraph };
+    let target: char = if diagraph == 'J' { 'I' } else { diagraph };
     for row in 0..5 {
         for col in 0..5 {
             if grid[row][col] == target {
@@ -107,11 +107,11 @@ fn main() {
 
     let plaintext: String = plaintext_input
         .chars()
-        .filter(|&ch| ch != ' ' && ch != ',' && ch != '.')
+        .filter(|&ch| ch.is_alphabetic())
         .map(|ch| ch.to_ascii_uppercase())
         .collect();
 
-    println!("plaintext: {}", plaintext);
+    debug!("plaintext: {}", plaintext);
 
     let plaintext_chars: Vec<char> = plaintext.chars().collect();
 
@@ -144,9 +144,6 @@ fn main() {
         } else {
             first_letter_index = first_letter_index + 2;
         }
-
-        // print!("{}", diagraph_first_letter);
-        // print!("{}", diagraph_second_letter);
 
         let first_letter_row = find_row(keyword_grid, diagraph_first_letter);
         let first_letter_col = find_col(keyword_grid, diagraph_first_letter);
@@ -181,5 +178,7 @@ fn main() {
     }
 
     let ciphertext_output: String = ciphertext.into_iter().collect();
-    println!("ciphertext: {}", ciphertext_output);
+
+    debug!("ciphertext_output: {}", ciphertext_output);
+    println!("{}", ciphertext_output);
 }
